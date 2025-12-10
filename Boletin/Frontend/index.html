@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Boletín de Noticias</title>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background: #f2f4f7;
+    font-family: "Inter", sans-serif;
+    color: #333;
+}
+header {
+    background: #1f2d3d;
+    padding: 25px 40px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+header h1 {
+    font-weight: 600;
+    font-size: 26px;
+    margin: 0;
+}
+.btn {
+    padding: 10px 18px;
+    background: #2c82e0;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+.btn:hover { background: #1d6ec0; }
+.btn-red { background: #e04848; }
+.btn-red:hover { background: #c73838; }
+
+#listaNoticias {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 25px;
+}
+
+.noticia {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+    transition: 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInCard 0.6s ease forwards;
+}
+@keyframes fadeInCard {
+    to { opacity:1; transform: translateY(0); }
+}
+.noticia h3 { margin-top:0; font-size:20px; font-weight:600; }
+.noticia p {
+    color:#555;
+    margin:10px 0;
+    line-height:1.5;
+    max-height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.noticia img { width:100%; max-height:180px; object-fit:cover; border-radius:10px; margin-top:10px; }
+.noticia a { display:none; }
+.noticia small { display:none; }
+
+#modalFondo {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+#formNoticia {
+    background: white;
+    padding: 30px;
+    width: 420px;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    animation: fadeIn 0.3s ease;
+}
+#formNoticia h2 { margin-top:0; font-size:22px; margin-bottom:20px; }
+#formNoticia input, #formNoticia textarea {
+    width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; font-size:15px;
+}
+#formNoticia textarea { height:110px; resize:vertical; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+
+#modalNoticia {
+    position: fixed;
+    inset:0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+#modalNoticia .contenido {
+    background: white;
+    max-width: 700px;
+    width: 90%;
+    border-radius: 14px;
+    padding: 25px;
+    position: relative;
+    animation: slideIn 0.4s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+#modalNoticia .contenido img {
+    width:100%;
+    max-height:400px;
+    object-fit:cover;
+    border-radius:10px;
+    margin:15px 0;
+}
+#modalNoticia .contenido h3 { margin-top:0; font-size:24px; }
+#modalNoticia .contenido p {
+    line-height:1.6;
+    color:#555;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: justify;
+    margin: 0;
+    width: 100%;
+}
+#modalNoticia .contenido a { display:inline-block; margin-top:12px; color:#2c82e0; text-decoration:none; font-weight:600; }
+#modalNoticia .contenido a:hover { text-decoration:underline; }
+#modalNoticia .contenido small { display:block; margin-top:15px; color:#777; font-size:13px; }
+#modalNoticia .cerrar { position:absolute; top:12px; right:12px; font-size:22px; background:none; border:none; cursor:pointer;}
+@keyframes slideIn { from { opacity:0; transform:translateY(-15px);} to { opacity:1; transform:translateY(0);} }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Boletín de Noticias</h1>
+    <button class="btn" id="btnMostrarForm">➕ Agregar Noticia</button>
+</header>
+
+<div id="modalFondo">
+    <form id="formNoticia">
+        <h2>Nueva Noticia</h2>
+        <input type="text" name="titulo" placeholder="Título (opcional)">
+        <textarea name="contenido" placeholder="Contenido (opcional)"></textarea>
+        <input type="file" name="pdf" accept="application/pdf" required>
+        <!-- Campo para subir imagen -->
+        <input type="file" name="imagen" accept="image/*">
+        <div style="display:flex; justify-content:flex-end;">
+            <button type="button" class="btn-red" id="btnCancelar">Cancelar</button>
+            <button type="submit" class="btn" style="margin-left:10px;">Crear</button>
+        </div>
+    </form>
+</div>
+
+<div id="modalNoticia">
+    <div class="contenido">
+        <button class="cerrar">&times;</button>
+        <h3></h3>
+        <p></p>
+        <img src="" alt="Imagen noticia">
+        <a href="" target="_blank">📄 Ver PDF</a>
+        <small></small>
+    </div>
+</div>
+
+<div id="listaNoticias"></div>
+
+<script>
+const apiUrl = "https://backend-xbfe.onrender.com/api/noticias";
+const listaDiv = document.getElementById("listaNoticias");
+const modal = document.getElementById("modalFondo");
+const form = document.getElementById("formNoticia");
+const btnAgregar = document.getElementById("btnMostrarForm");
+const btnCancelar = document.getElementById("btnCancelar");
+const modalNoticia = document.getElementById("modalNoticia");
+const contenidoModal = modalNoticia.querySelector(".contenido");
+const defaultImg = "https://backend-xbfe.onrender.com/uploads/images/default.png";
+
+btnAgregar.onclick = () => modal.style.display="flex";
+btnCancelar.onclick = () => { modal.style.display="none"; form.reset(); }
+
+form.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    // Crear FormData
+    const formData = new FormData();
+
+    // Agregar parámetros de texto
+    formData.append("titulo", form.titulo.value.trim());
+    formData.append("contenido", form.contenido.value.trim());
+
+    // Agregar archivos si existen
+    if (form.pdf.files[0]) formData.append("pdf", form.pdf.files[0]);
+    if (form.imagen.files[0]) formData.append("imagen", form.imagen.files[0]);
+
+    // Revisar qué datos están en FormData
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);  // Esto imprimirá todos los parámetros que se están enviando
+    }
+
+    // Realizar la solicitud POST
+    const res = await fetch(apiUrl + "/agregar", { method: "POST", body: formData });
+
+    if (res.ok) {
+        form.reset();
+        modal.style.display = "none";
+        listarNoticias();
+    } else {
+        const errorMessage = await res.text();  // Leer el mensaje de error
+        console.error("Error al agregar noticia:", errorMessage);
+        alert("Error al agregar noticia: " + errorMessage);
+    }
+});
+async function listarNoticias(){
+    const res = await fetch(apiUrl);
+    const noticias = await res.json();
+    listaDiv.innerHTML = "";
+    noticias.forEach(n => {
+        const card = document.createElement("div");
+        card.className="noticia";
+        let imgHtml = "";
+        if (n.imagen) {
+            imgHtml = `<img src="https://backend-xbfe.onrender.com/${n.imagen}" onerror="this.src='${defaultImg}'" alt="Imagen noticia">`;
+        } else {
+            imgHtml = `<img src="${defaultImg}" alt="Imagen noticia">`;
+        }
+        card.innerHTML = `<h3>${n.titulo || "Sin título"}</h3><p>${n.contenido || ""}</p>${imgHtml}<small>${new Date(n.fecha).toLocaleString()}</small>`;
+        card.addEventListener("click", () => {
+            modalNoticia.style.display = "flex";
+            contenidoModal.querySelector("h3").textContent = n.titulo || "Sin título";
+            contenidoModal.querySelector("p").innerHTML = (n.contenido || "").replace(/\./g, ".<br>");
+            contenidoModal.querySelector("img").src = n.imagen ? `https://backend-xbfe.onrender.com/${n.imagen}` : defaultImg;
+            if (n.pdfPath) { 
+                contenidoModal.querySelector("a").style.display = "inline-block"; 
+                contenidoModal.querySelector("a").href = `/${n.pdfPath}`;
+            } else {
+                contenidoModal.querySelector("a").style.display = "none"; 
+            }
+            contenidoModal.querySelector("small").textContent = new Date(n.fecha).toLocaleString();
+        });
+        listaDiv.appendChild(card);
+    });
+}
+
+contenidoModal.querySelector(".cerrar").onclick = () => { modalNoticia.style.display="none"; }
+
+listarNoticias();
+</script>
+</body>
+</html>
