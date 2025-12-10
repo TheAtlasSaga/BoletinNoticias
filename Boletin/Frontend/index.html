@@ -186,7 +186,7 @@ header h1 {
 <div id="listaNoticias"></div>
 
 <script>
-const apiUrl = "https://backend-xbfe.onrender.com/api/noticias";
+const apiUrl = "https://boletinnoticias.onrender.com/api/noticias";
 const listaDiv = document.getElementById("listaNoticias");
 const modal = document.getElementById("modalFondo");
 const form = document.getElementById("formNoticia");
@@ -194,7 +194,7 @@ const btnAgregar = document.getElementById("btnMostrarForm");
 const btnCancelar = document.getElementById("btnCancelar");
 const modalNoticia = document.getElementById("modalNoticia");
 const contenidoModal = modalNoticia.querySelector(".contenido");
-const defaultImg = "https://backend-xbfe.onrender.com/uploads/images/default.png";
+const defaultImg = "https://boletinnoticias.onrender.com/uploads/images/default.png";
 
 btnAgregar.onclick = () => modal.style.display="flex";
 btnCancelar.onclick = () => { modal.style.display="none"; form.reset(); }
@@ -240,7 +240,7 @@ async function listarNoticias(){
         card.className="noticia";
         let imgHtml = "";
         if (n.imagen) {
-            imgHtml = `<img src="https://backend-xbfe.onrender.com/${n.imagen}" onerror="this.src='${defaultImg}'" alt="Imagen noticia">`;
+            imgHtml = `<img src="https://boletinnoticias.onrender.com/${n.imagen}" onerror="this.src='${defaultImg}'" alt="Imagen noticia">`;
         } else {
             imgHtml = `<img src="${defaultImg}" alt="Imagen noticia">`;
         }
@@ -249,7 +249,7 @@ async function listarNoticias(){
             modalNoticia.style.display = "flex";
             contenidoModal.querySelector("h3").textContent = n.titulo || "Sin título";
             contenidoModal.querySelector("p").innerHTML = (n.contenido || "").replace(/\./g, ".<br>");
-            contenidoModal.querySelector("img").src = n.imagen ? `https://backend-xbfe.onrender.com/${n.imagen}` : defaultImg;
+            contenidoModal.querySelector("img").src = n.imagen ? `https://boletinnoticias.onrender.com/${n.imagen}` : defaultImg;
             if (n.pdfPath) { 
                 contenidoModal.querySelector("a").style.display = "inline-block"; 
                 contenidoModal.querySelector("a").href = `/${n.pdfPath}`;
